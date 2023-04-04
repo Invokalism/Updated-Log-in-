@@ -74,6 +74,12 @@
     <Compile Include="Borrower.Designer.cs">
       <DependentUpon>Borrower.cs</DependentUpon>
     </Compile>
+    <Compile Include="change password.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="change password.Designer.cs">
+      <DependentUpon>change password.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form2.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -111,6 +117,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Borrower.resx">
       <DependentUpon>Borrower.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="change password.resx">
+      <DependentUpon>change password.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>Form2.cs</DependentUpon>

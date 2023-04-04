@@ -67,5 +67,12 @@ namespace LoginAndSignup
             this.Hide();
             reg.ShowDialog();
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Change_password cp = new Change_password();
+            cp.Show();
+            this.Hide();
+        }
     }
 }
