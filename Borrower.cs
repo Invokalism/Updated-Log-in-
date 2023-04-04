@@ -38,55 +38,78 @@ namespace LoginAndSignup
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            con.Open();
+            if (txtno.Text != String.Empty && txtfirst.Text != String.Empty && txtlast.Text != String.Empty)
+            {
 
-            OleDbCommand com = new OleDbCommand("Insert into borrower values ('" + txtno.Text + "', '" + txtfirst.Text + "', '" + txtlast.Text + "')", con);
-            com.ExecuteNonQuery();
 
-            MessageBox.Show("Successfully SAVED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                con.Open();
 
-            con.Close();
-            loadDataGrid();
+                OleDbCommand com = new OleDbCommand("Insert into borrower values ('" + txtno.Text + "', '" + txtfirst.Text + "', '" + txtlast.Text + "')", con);
+                com.ExecuteNonQuery();
+
+                MessageBox.Show("Successfully SAVED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                con.Close();
+                loadDataGrid();
+            }
+            else
+            {
+                MessageBox.Show("Please complete all fields.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            con.Open();
-            int no;
-            no = int.Parse(txtno.Text);
+            if (txtno.Text != String.Empty && txtfirst.Text != String.Empty && txtlast.Text != String.Empty)
+            {
+                con.Open();
+                int no;
+                no = int.Parse(txtno.Text);
 
-            OleDbCommand com = new OleDbCommand("Update borrower SET first_name= '" + txtfirst.Text + "', last_name='" + txtlast.Text + "' where id_num= '" + no + "'", con);
-            com.ExecuteNonQuery();
+                OleDbCommand com = new OleDbCommand("Update borrower SET first_name= '" + txtfirst.Text + "', last_name='" + txtlast.Text + "' where id_num= '" + no + "'", con);
+                com.ExecuteNonQuery();
 
-            MessageBox.Show("Successfully UPDATED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Successfully UPDATED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            con.Close();
-            loadDataGrid();
+                con.Close();
+                loadDataGrid();
+            }
+            else
+            {
+                MessageBox.Show("Please complete all fields.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            con.Open();
-            string num = txtno.Text;
-
-            DialogResult dr = MessageBox.Show("Are you sure you want to delete this?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if (dr == DialogResult.Yes)
+            if (txtno.Text != String.Empty && txtfirst.Text != String.Empty && txtlast.Text != String.Empty)
             {
-                OleDbCommand com = new OleDbCommand("Delete from borrower where id_num= '" + num + "'", con);
-                com.ExecuteNonQuery();
+                con.Open();
+                string num = txtno.Text;
 
-                MessageBox.Show("Successfully DELETED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DialogResult dr = MessageBox.Show("Are you sure you want to delete this?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (dr == DialogResult.Yes)
+                {
+                    OleDbCommand com = new OleDbCommand("Delete from borrower where id_num= '" + num + "'", con);
+                    com.ExecuteNonQuery();
+
+                    MessageBox.Show("Successfully DELETED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("CANCELLED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                con.Close();
+                loadDataGrid();
             }
             else
             {
-                MessageBox.Show("CANCELLED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please complete all fields.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            con.Close();
-            loadDataGrid();
         }
 
-        private void txtSearch_TextChanged(object sender, EventArgs e)
+            private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             con.Open();
 
@@ -176,6 +199,14 @@ namespace LoginAndSignup
         {
             reports rp = new reports();
             rp.Show();
+            this.Hide();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            login lg = new login();
+            MessageBox.Show("Log out Successfully.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            lg.Show();
             this.Hide();
         }
     }

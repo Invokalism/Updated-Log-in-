@@ -16,7 +16,7 @@ namespace LoginAndSignup
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Borrower());
+            Application.Run(new reports());
         }
     }
 }

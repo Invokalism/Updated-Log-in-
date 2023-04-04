@@ -39,6 +39,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtno = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtmaxquantity = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.txtquantity = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
@@ -57,6 +59,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.txtidnum = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -153,6 +156,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtmaxquantity);
+            this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.txtquantity);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.button1);
@@ -163,11 +168,30 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.txtno);
             this.groupBox1.Controls.Add(this.deduct);
-            this.groupBox1.Location = new System.Drawing.Point(99, 78);
+            this.groupBox1.Location = new System.Drawing.Point(101, 59);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(619, 144);
+            this.groupBox1.Size = new System.Drawing.Size(619, 174);
             this.groupBox1.TabIndex = 14;
             this.groupBox1.TabStop = false;
+            // 
+            // txtmaxquantity
+            // 
+            this.txtmaxquantity.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtmaxquantity.Location = new System.Drawing.Point(217, 137);
+            this.txtmaxquantity.Name = "txtmaxquantity";
+            this.txtmaxquantity.Size = new System.Drawing.Size(221, 22);
+            this.txtmaxquantity.TabIndex = 22;
+            this.txtmaxquantity.TextChanged += new System.EventHandler(this.textBox1_TextChanged_1);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(25, 133);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(194, 25);
+            this.label9.TabIndex = 21;
+            this.label9.Text = "Book Max Quantity";
             // 
             // txtquantity
             // 
@@ -240,7 +264,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Modern No. 20", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(340, 44);
+            this.label5.Location = new System.Drawing.Point(341, 25);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(175, 31);
             this.label5.TabIndex = 15;
@@ -350,11 +374,25 @@
             this.button3.Text = "Borrow";
             this.button3.UseVisualStyleBackColor = true;
             // 
+            // button5
+            // 
+            this.button5.FlatAppearance.BorderSize = 0;
+            this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button5.ForeColor = System.Drawing.Color.Blue;
+            this.button5.Location = new System.Drawing.Point(713, 0);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.TabIndex = 20;
+            this.button5.Text = "Log out";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
             // Borrow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.groupBox1);
@@ -406,5 +444,8 @@
         private System.Windows.Forms.TextBox txtquantity;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.TextBox txtmaxquantity;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button button5;
     }
 }

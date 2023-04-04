@@ -22,8 +22,8 @@ namespace LoginAndSignup
         public login()
         {
             InitializeComponent();
-            conn = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\LoginAndSignup\LibSys.mdb");
-            conn.Open();
+            conn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\LoginAndSignup\\LibSys.mdb");
+        conn.Open();
         }
 
         private void login_Load(object sender, EventArgs e)

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -31,6 +32,12 @@ namespace LoginAndSignup
             string username = txtusername.Text;
             string password = txtpassword.Text;
 
+
+            if (!UsernameStrong(username))
+            {
+                MessageBox.Show("Please enter a stronger username.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             if (!IsPasswordStrong(password))
             {
                 MessageBox.Show("Please enter a stronger password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -41,19 +48,46 @@ namespace LoginAndSignup
                 MessageBox.Show("Please enter same password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            string query = "SELECT COUNT(*) FROM Login WHERE username = ?";
+            OleDbCommand command = new OleDbCommand(query, conn);
+            command.Parameters.AddWithValue("@username", username);
 
-            string encryptedPassword = EncryptionHelper.EncryptPassword(password);
-            addrecord(username, encryptedPassword);
-            MessageBox.Show("Sign Up Successfully. You can login now.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // open the connection and execute the query
+            conn.Open();
+            int count = (int)command.ExecuteScalar();
 
-            this.Hide();
-            login log = new login();
-            log.ShowDialog();
+            // check if the username already exists
+            if (count > 0)
+            {
+                conn.Close();
+                MessageBox.Show("Username already Exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+            else
+            {
+
+                conn.Close();
+                string encryptedPassword = EncryptionHelper.EncryptPassword(password);
+                addrecord(username, encryptedPassword);
+                MessageBox.Show("Sign Up Successfully. You can login now.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                this.Hide();
+                login log = new login();
+                log.ShowDialog();
+            }
         }
         private bool IsPasswordStrong(string password)
         {
-            // Add password complexity rules here using regular expressions
-            return true;
+            string pattern = @"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^\w\s]).{8,}$";
+
+
+            return Regex.IsMatch(password, pattern);
+            
+        }
+        private bool UsernameStrong(string username)
+        {
+            string pattern1 = @"^(?=.{5,})[a-zA-Z0-9_]+$";
+            return Regex.IsMatch(username, pattern1);
         }
 
         private void addrecord(string username, string password)

@@ -23,45 +23,62 @@ namespace LoginAndSignup
 
         private void button1_Click(object sender, EventArgs e)
         {
-            con.Open();
-            int no;
-            int value = 1;
-            no = int.Parse(txtno.Text);
-            string title = txttitle.Text;
-            string author = txtauthor.Text;
-            int num;
-            num = int.Parse(txtidnum.Text);
-            string fname = txtfname.Text;   
-            string lname = txtlname.Text;   
-            DateTime dt = DateTime.Now;
-            string sqlFormattedDate = dt.ToString("yyyy-MMMM-dd HH:mm:ss.fff");
-            string r = "BORROWED";
+            if (txtidnum.Text != string.Empty && txtquantity.Text != string.Empty)
+            {
+                con.Open();
+                int no;
+                int value = 1;
+                no = int.Parse(txtno.Text);
+                string title = txttitle.Text;
+                string author = txtauthor.Text;
+                string lname = txtlname.Text;
+                string fname = txtfname.Text;
+                int id;
+                id = int.Parse(txtidnum.Text);
+                DateTime dt = DateTime.Now;
+                string sqlFormattedDate = dt.ToString("yyyy-MMMM-dd hh:mm tt");
+                string r = "BORROWED";
 
-            int oldquantity = Convert.ToInt32(txtquantity.Text);
-            int newquantity = oldquantity - value;
-            OleDbCommand com = new OleDbCommand("UPDATE book SET Quantity= '" + newquantity + "', title= '" + title + "', author='" + author + "'  WHERE accession_number = '" + no + "'", con);
-            com.ExecuteNonQuery();
+                int oldquantity = Convert.ToInt32(txtquantity.Text);
+                int newquantity = oldquantity - value;
 
-            con.Close();
-            loadDataGrid();
+                if (newquantity >= 0)
+                {
+                    OleDbCommand com = new OleDbCommand("UPDATE book SET Quantity= '" + newquantity + "', title= '" + title + "', author='" + author + "'  WHERE book_number = '" + no + "'", con);
+                    com.ExecuteNonQuery();
 
-            MessageBox.Show("Successfully UPDATED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            loadDataGrid();
+                    con.Close();
+                    loadDataGrid();
 
-            con.Open();
-            OleDbCommand com1 = new OleDbCommand("INSERT INTO records ([date], [id_num], [first_name], [last_name], [book_num], [title], [author], [remarks]) VALUES (@date, @id_num, @first_name, @last_name, @book_num, @title, @author, @remarks)", con);
-            com1.Parameters.AddWithValue("@date", sqlFormattedDate);
-            com1.Parameters.AddWithValue("@id_num", num);
-            com1.Parameters.AddWithValue("@first_name", fname);
-            com1.Parameters.AddWithValue("@last_name", lname);
-            com1.Parameters.AddWithValue("@book_num", no);
-            com1.Parameters.AddWithValue("@title", title);
-            com1.Parameters.AddWithValue("@author", author);
-            com1.Parameters.AddWithValue("@remarks", r);
-            com1.ExecuteNonQuery();
+                    MessageBox.Show("Successfully UPDATED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    loadDataGrid();
 
-            con.Close();
-            loadDataGrid();
+                    con.Open();
+                    OleDbCommand com1 = new OleDbCommand("INSERT INTO records ([date], [id_num], [first_name], [last_name], [book_num], [title], [author], [remarks]) VALUES (@date, @id_num, @first_name, @last_name, @book_num, @title, @author, @remarks)", con);
+                    com1.Parameters.AddWithValue("@date", sqlFormattedDate);
+                    com1.Parameters.AddWithValue("@id_num", id);
+                    com1.Parameters.AddWithValue("@first_name", fname);
+                    com1.Parameters.AddWithValue("@last_name", lname);
+                    com1.Parameters.AddWithValue("@book_num", no);
+                    com1.Parameters.AddWithValue("@title", title);
+                    com1.Parameters.AddWithValue("@author", author);
+                    com1.Parameters.AddWithValue("@remarks", r);
+                    com1.ExecuteNonQuery();
+
+                    con.Close();
+                    loadDataGrid();
+                }
+                else
+                {
+                    MessageBox.Show("The Book is not available", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    con.Close();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please complete all fields.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
 
 
 
@@ -70,10 +87,11 @@ namespace LoginAndSignup
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
-            txtno.Text = grid1.Rows[e.RowIndex].Cells["accession_number"].Value.ToString();
+            txtno.Text = grid1.Rows[e.RowIndex].Cells["book_number"].Value.ToString();
             txttitle.Text = grid1.Rows[e.RowIndex].Cells["title"].Value.ToString();
             txtauthor.Text = grid1.Rows[e.RowIndex].Cells["author"].Value.ToString();
             txtquantity.Text = grid1.Rows[e.RowIndex].Cells["Quantity"].Value.ToString();
+            txtmaxquantity.Text = grid1.Rows[e.RowIndex].Cells["Max_quantity"].Value.ToString();
         }
         private void EmptyTextBox()
         {
@@ -81,6 +99,10 @@ namespace LoginAndSignup
             txtauthor.Text = "";
             txttitle.Text = "";
             txtquantity.Text = "";
+            txtmaxquantity.Text = "";
+            txtidnum.Text = "";
+            txtfname.Text = "";
+            txtlname.Text = "";
 
         }
 
@@ -92,7 +114,7 @@ namespace LoginAndSignup
         {
             con.Open();
 
-            OleDbCommand com = new OleDbCommand("Select * from book order by accession_number asc", con);
+            OleDbCommand com = new OleDbCommand("Select * from book order by book_number asc", con);
             com.ExecuteNonQuery();
 
             OleDbDataAdapter adap = new OleDbDataAdapter(com);
@@ -139,41 +161,63 @@ namespace LoginAndSignup
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            con.Open();
-            int no;
-            int value = 1;
-            no = int.Parse(txtno.Text);
-            string title = txttitle.Text;
-            string author = txtauthor.Text;
-            DateTime dt = DateTime.Now;
-            string sqlFormattedDate = dt.ToString("yyyy-MMMM-dd HH:mm:ss.fff");
-            string r = "RETURNED";
+            if (txtidnum.Text != string.Empty && txtquantity.Text != string.Empty)
+            {
+                con.Open();
+                int no;
+                int value = 1;
+                no = int.Parse(txtno.Text);
+                string title = txttitle.Text;
+                string author = txtauthor.Text;
+                string lname = txtlname.Text;
+                string fname = txtfname.Text;
+                int id;
+                id = int.Parse(txtidnum.Text);
+                DateTime dt = DateTime.Now;
+                string sqlFormattedDate = dt.ToString("yyyy-MMMM-dd hh:mm tt");
+                string r = "RETURNED";
 
-            int oldquantity = Convert.ToInt32(txtquantity.Text);
-            int newquantity = oldquantity + value;
-            OleDbCommand com = new OleDbCommand("UPDATE book SET Quantity= '" + newquantity + "', title= '" + title + "', author='" + title + "'  WHERE accession_number = '" + no + "'", con);
-            com.ExecuteNonQuery();
+                int oldquantity = Convert.ToInt32(txtquantity.Text);
+                int maxquantity = Convert.ToInt32(txtmaxquantity.Text);
+                int newquantity = oldquantity + value;
 
-            con.Close();
-            loadDataGrid();
+                if (newquantity <= maxquantity)
+                {
+                    OleDbCommand com = new OleDbCommand("UPDATE book SET Quantity= '" + newquantity + "', title= '" + title + "', author='" + author + "'  WHERE book_number = '" + no + "'", con);
+                    com.ExecuteNonQuery();
 
-            MessageBox.Show("Successfully UPDATED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            loadDataGrid();
+                    con.Close();
+                    loadDataGrid();
 
-            con.Open();
-            OleDbCommand com1 = new OleDbCommand("INSERT INTO records ([date], [id_num], [first_name], [last_name], [book_num], [title], [author], [remarks]) VALUES (@date, @id_num, @first_name, @last_name, @book_num, @title, @author, @remarks)", con);
-            com1.Parameters.AddWithValue("@date", sqlFormattedDate);
-            com1.Parameters.AddWithValue("@id_num", txtidnum.Text);
-            com1.Parameters.AddWithValue("@first_name", txtfname.Text);
-            com1.Parameters.AddWithValue("@last_name", txtlname.Text);
-            com1.Parameters.AddWithValue("@book_num", no);
-            com1.Parameters.AddWithValue("@title", title);
-            com1.Parameters.AddWithValue("@author", author);
-            com1.Parameters.AddWithValue("@remarks", r);
-            com1.ExecuteNonQuery();
+                    MessageBox.Show("Successfully UPDATED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    loadDataGrid();
 
-            con.Close();
-            loadDataGrid();
+                    con.Open();
+                    OleDbCommand com1 = new OleDbCommand("INSERT INTO records ([date], [id_num], [first_name], [last_name], [book_num], [title], [author], [remarks]) VALUES (@date, @id_num, @first_name, @last_name, @book_num, @title, @author, @remarks)", con);
+                    com1.Parameters.AddWithValue("@date", sqlFormattedDate);
+                    com1.Parameters.AddWithValue("@id_num", id);
+                    com1.Parameters.AddWithValue("@first_name", fname);
+                    com1.Parameters.AddWithValue("@last_name", lname);
+                    com1.Parameters.AddWithValue("@book_num", no);
+                    com1.Parameters.AddWithValue("@title", title);
+                    com1.Parameters.AddWithValue("@author", author);
+                    com1.Parameters.AddWithValue("@remarks", r);
+                    com1.ExecuteNonQuery();
+
+                    con.Close();
+                    loadDataGrid();
+                }
+                else
+                {
+                    MessageBox.Show("All the books have been returned.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    con.Close();    
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please complete all fields.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+          
 
 
 
@@ -197,19 +241,26 @@ namespace LoginAndSignup
 
         private void button4_Click(object sender, EventArgs e)
         {
-            con.Open();
-            int idNum = int.Parse(txtidnum.Text);
-
-
-            OleDbCommand com = new OleDbCommand("Select * from borrower where id_num = '" + idNum + "'" ,con);
-            OleDbDataReader reader = com.ExecuteReader();
-            if (reader.Read())
+            if (txtidnum.Text != string.Empty )
             {
-                txtfname.Text = reader.GetValue(1).ToString();
-                txtlname.Text = reader.GetValue(2).ToString();
+                con.Open();
+                int idNum = int.Parse(txtidnum.Text);
+
+
+                OleDbCommand com = new OleDbCommand("Select * from borrower where id_num = '" + idNum + "'", con);
+                OleDbDataReader reader = com.ExecuteReader();
+                if (reader.Read())
+                {
+                    txtfname.Text = reader.GetValue(1).ToString();
+                    txtlname.Text = reader.GetValue(2).ToString();
+                }
+                reader.Close();
+                con.Close();
             }
-            reader.Close();
-            con.Close();
+            else
+            {
+                MessageBox.Show("Please complete all fields.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void label8_Click(object sender, EventArgs e)
@@ -226,6 +277,19 @@ namespace LoginAndSignup
         {
             reports rp = new reports();
             rp.Show();
+            this.Hide();
+        }
+
+        private void textBox1_TextChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            login lg = new login();
+            MessageBox.Show("Log out Successfully.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            lg.Show();
             this.Hide();
         }
     }
