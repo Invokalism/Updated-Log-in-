@@ -16,7 +16,7 @@ namespace LoginAndSignup
 {
     public partial class Change_password : Form
     {
-        
+
         private OleDbConnection conn;
         private OleDbCommand com;
         private OleDbDataReader dr;
@@ -27,7 +27,7 @@ namespace LoginAndSignup
             InitializeComponent();
             conn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\LoginAndSignup\\LibSys.mdb");
             conn.Open();
-           
+
 
         }
 
@@ -77,7 +77,7 @@ namespace LoginAndSignup
         }
 
 
-            private void button2_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
             login lg = new login();
             lg.Show();
@@ -113,5 +113,6 @@ namespace LoginAndSignup
                 }
             }
         }
-    
+
+    }
 }
