@@ -19,7 +19,7 @@ namespace LoginAndSignup
         public Registration()
         {
             InitializeComponent();
-            conn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\LoginAndSignup\\LibSys.mdb");
+            conn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Users\\Lourdes\\source\\repos\\Updated-Log-in-\\LibSys.mdb");
         }
 
         private void register1_Load(object sender, EventArgs e)

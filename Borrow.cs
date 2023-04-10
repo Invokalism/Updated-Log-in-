@@ -18,7 +18,7 @@ namespace LoginAndSignup
         public Borrow()
         {
             InitializeComponent();
-            con = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\LoginAndSignup\\LibSys.mdb");
+            con = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Users\\Lourdes\\source\\repos\\Updated-Log-in-\\LibSys.mdb");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -44,29 +44,59 @@ namespace LoginAndSignup
 
                 if (newquantity >= 0)
                 {
-                    OleDbCommand com = new OleDbCommand("UPDATE book SET Quantity= '" + newquantity + "', title= '" + title + "', author='" + author + "'  WHERE book_number = '" + no + "'", con);
-                    com.ExecuteNonQuery();
-
                     con.Close();
-                    loadDataGrid();
+                    string query = "SELECT COUNT(*) FROM duplicate WHERE id_num = ?";
+                    OleDbCommand command = new OleDbCommand(query, con);
+                    command.Parameters.AddWithValue("@id_num", id);
 
-                    MessageBox.Show("Successfully UPDATED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    loadDataGrid();
-
+                    // open the connection and execute the query
                     con.Open();
-                    OleDbCommand com1 = new OleDbCommand("INSERT INTO records ([date], [id_num], [first_name], [last_name], [book_num], [title], [author], [remarks]) VALUES (@date, @id_num, @first_name, @last_name, @book_num, @title, @author, @remarks)", con);
-                    com1.Parameters.AddWithValue("@date", sqlFormattedDate);
-                    com1.Parameters.AddWithValue("@id_num", id);
-                    com1.Parameters.AddWithValue("@first_name", fname);
-                    com1.Parameters.AddWithValue("@last_name", lname);
-                    com1.Parameters.AddWithValue("@book_num", no);
-                    com1.Parameters.AddWithValue("@title", title);
-                    com1.Parameters.AddWithValue("@author", author);
-                    com1.Parameters.AddWithValue("@remarks", r);
-                    com1.ExecuteNonQuery();
+                    int count = (int)command.ExecuteScalar();
 
-                    con.Close();
-                    loadDataGrid();
+                    // check if the username already exists
+                    if (count > 0)
+                    {
+                        con.Close();
+                        MessageBox.Show("User already borrowed a book.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        con.Close();
+                        con.Open();
+                        OleDbCommand com = new OleDbCommand("UPDATE book SET Quantity= '" + newquantity + "', title= '" + title + "', author='" + author + "'  WHERE book_number = '" + no + "'", con);
+                        com.ExecuteNonQuery();
+
+                        con.Close();
+                        loadDataGrid();
+
+                        MessageBox.Show("Successfully UPDATED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        loadDataGrid();
+
+                        con.Open();
+                        OleDbCommand com1 = new OleDbCommand("INSERT INTO records ([date], [id_num], [first_name], [last_name], [book_num], [title], [author], [remarks]) VALUES (@date, @id_num, @first_name, @last_name, @book_num, @title, @author, @remarks)", con);
+                        com1.Parameters.AddWithValue("@date", sqlFormattedDate);
+                        com1.Parameters.AddWithValue("@id_num", id);
+                        com1.Parameters.AddWithValue("@first_name", fname);
+                        com1.Parameters.AddWithValue("@last_name", lname);
+                        com1.Parameters.AddWithValue("@book_num", no);
+                        com1.Parameters.AddWithValue("@title", title);
+                        com1.Parameters.AddWithValue("@author", author);
+                        com1.Parameters.AddWithValue("@remarks", r);
+                        com1.ExecuteNonQuery();
+
+                        con.Close();
+                        loadDataGrid();
+
+                        con.Open();
+                        OleDbCommand com2 = new OleDbCommand("INSERT INTO duplicate ([id_num], [book_num]) VALUES (@id_num, @book_num)", con);
+                        com2.Parameters.AddWithValue("@id_num", id);
+                        com2.Parameters.AddWithValue("@book_num", no);
+
+                        com2.ExecuteNonQuery();
+
+                        con.Close();
+                        loadDataGrid();
+                    }
                 }
                 else
                 {
@@ -181,36 +211,66 @@ namespace LoginAndSignup
                 int maxquantity = Convert.ToInt32(txtmaxquantity.Text);
                 int newquantity = oldquantity + value;
 
+
                 if (newquantity <= maxquantity)
                 {
-                    OleDbCommand com = new OleDbCommand("UPDATE book SET Quantity= '" + newquantity + "', title= '" + title + "', author='" + author + "'  WHERE book_number = '" + no + "'", con);
-                    com.ExecuteNonQuery();
-
                     con.Close();
-                    loadDataGrid();
+                    string query = "SELECT COUNT(*) FROM duplicate WHERE id_num = ? AND book_num = ?";
+                    OleDbCommand command = new OleDbCommand(query, con);
+                    command.Parameters.AddWithValue("@id_num", id);
+                    command.Parameters.AddWithValue("@book_num", txtno.Text);
 
-                    MessageBox.Show("Successfully UPDATED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    loadDataGrid();
-
+                    // open the connection and execute the query
                     con.Open();
-                    OleDbCommand com1 = new OleDbCommand("INSERT INTO records ([date], [id_num], [first_name], [last_name], [book_num], [title], [author], [remarks]) VALUES (@date, @id_num, @first_name, @last_name, @book_num, @title, @author, @remarks)", con);
-                    com1.Parameters.AddWithValue("@date", sqlFormattedDate);
-                    com1.Parameters.AddWithValue("@id_num", id);
-                    com1.Parameters.AddWithValue("@first_name", fname);
-                    com1.Parameters.AddWithValue("@last_name", lname);
-                    com1.Parameters.AddWithValue("@book_num", no);
-                    com1.Parameters.AddWithValue("@title", title);
-                    com1.Parameters.AddWithValue("@author", author);
-                    com1.Parameters.AddWithValue("@remarks", r);
-                    com1.ExecuteNonQuery();
+                    int count = (int)command.ExecuteScalar();
 
-                    con.Close();
-                    loadDataGrid();
+                    // check if the username already exists
+                    if (count > 0)
+                    {
+                        con.Close();
+                        MessageBox.Show("Wrong book.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        con.Close();
+                        con.Open ();
+                        OleDbCommand com = new OleDbCommand("UPDATE book SET Quantity= '" + newquantity + "', title= '" + title + "', author='" + author + "'  WHERE book_number = '" + no + "'", con);
+                        com.ExecuteNonQuery();
+
+                        con.Close();
+                        loadDataGrid();
+
+                        MessageBox.Show("Successfully UPDATED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        loadDataGrid();
+
+                        con.Open();
+                        OleDbCommand com1 = new OleDbCommand("INSERT INTO records ([date], [id_num], [first_name], [last_name], [book_num], [title], [author], [remarks]) VALUES (@date, @id_num, @first_name, @last_name, @book_num, @title, @author, @remarks)", con);
+                        com1.Parameters.AddWithValue("@date", sqlFormattedDate);
+                        com1.Parameters.AddWithValue("@id_num", id);
+                        com1.Parameters.AddWithValue("@first_name", fname);
+                        com1.Parameters.AddWithValue("@last_name", lname);
+                        com1.Parameters.AddWithValue("@book_num", no);
+                        com1.Parameters.AddWithValue("@title", title);
+                        com1.Parameters.AddWithValue("@author", author);
+                        com1.Parameters.AddWithValue("@remarks", r);
+                        com1.ExecuteNonQuery();
+
+                        con.Close();
+                        loadDataGrid();
+
+                        con.Open();
+                        OleDbCommand com2 = new OleDbCommand("Delete from duplicate where id_num= '" + id + "'", con);
+                        com2.ExecuteNonQuery();
+
+                        con.Close();
+                        loadDataGrid();
+
+                    }
                 }
                 else
                 {
                     MessageBox.Show("All the books have been returned.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    con.Close();    
+                    con.Close();
                 }
             }
             else

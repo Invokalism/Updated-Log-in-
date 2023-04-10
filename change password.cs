@@ -25,7 +25,7 @@ namespace LoginAndSignup
         public Change_password()
         {
             InitializeComponent();
-            conn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\LoginAndSignup\\LibSys.mdb");
+            conn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Users\\Lourdes\\source\\repos\\Updated-Log-in-\\LibSys.mdb");
             conn.Open();
 
 
@@ -45,23 +45,32 @@ namespace LoginAndSignup
 
             if (txtpassword.Text != string.Empty || txtusername.Text != string.Empty)
             {
-                string encryptedPassword = EncryptionHelper.EncryptPassword(txtpassword.Text);
+                string encryptedPassword = DecryptionHelper.DecryptPassword(txtpassword.Text);
                 string encryptedPass = EncryptionHelper.EncryptPassword(txtconfirm.Text);
 
-                com = new OleDbCommand("Select * from Login where username = @username and password = @password", conn);
+                com = new OleDbCommand("select password from Login where username='" + username + "'", conn);
                 com.Parameters.AddWithValue("@username", txtusername.Text);
                 com.Parameters.AddWithValue("@password", encryptedPassword);
                 dr = com.ExecuteReader();
                 if (dr.Read())
                 {
-                    dr.Close();
-                    OleDbCommand cmd = new OleDbCommand("Update Login set password = @newpass where username = @username", conn);
-                    cmd.Parameters.AddWithValue("@newpass", encryptedPass);
-                    cmd.Parameters.AddWithValue("@username", username);
-                    int rowsAffected = cmd.ExecuteNonQuery();
-                    if (rowsAffected > 0)
+                    string storedPassword = (string)dr["password"];
+                    if (DecryptionHelper.DecryptPassword(storedPassword, password))
                     {
-                        MessageBox.Show("Password updated successfully.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        dr.Close();
+                        OleDbCommand cmd = new OleDbCommand("Update Login set password = '" + newpass + "' where username = '" + username + "'", conn);
+                        cmd.Parameters.AddWithValue("@newpass", encryptedPass);
+                        cmd.Parameters.AddWithValue("@username", username);
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Password updated successfully.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                    else
+                    {
+                        dr.Close();
+                        MessageBox.Show("Invalid password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
@@ -77,7 +86,11 @@ namespace LoginAndSignup
         }
 
 
-        private void button2_Click(object sender, EventArgs e)
+    
+
+
+
+    private void button2_Click(object sender, EventArgs e)
         {
             login lg = new login();
             lg.Show();
@@ -98,20 +111,24 @@ namespace LoginAndSignup
                     return Convert.ToBase64String(hashedPassword);
                 }
             }
+        }
+
+        public static class DecryptionHelper
+        {
             public static bool DecryptPassword(string hashedPassword, string password)
             {
                 byte[] salt = Encoding.UTF8.GetBytes("somerandomsalt"); // Add the same salt used for encryption
                 byte[] hashedPasswordBytes = Convert.FromBase64String(hashedPassword);
+                byte[] passwordWithSalt = new byte[password.Length + salt.Length];
+                Encoding.UTF8.GetBytes(password).CopyTo(passwordWithSalt, 0);
+                salt.CopyTo(passwordWithSalt, password.Length);
                 using (var sha256 = SHA256.Create())
                 {
-                    byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-                    byte[] passwordWithSalt = new byte[passwordBytes.Length + salt.Length];
-                    passwordBytes.CopyTo(passwordWithSalt, 0);
-                    salt.CopyTo(passwordWithSalt, passwordBytes.Length);
                     byte[] hashedPasswordToCheck = sha256.ComputeHash(passwordWithSalt);
                     return hashedPasswordBytes.SequenceEqual(hashedPasswordToCheck);
                 }
             }
+
         }
 
     }

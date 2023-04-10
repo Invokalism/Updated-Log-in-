@@ -22,7 +22,7 @@ namespace LoginAndSignup
         public login()
         {
             InitializeComponent();
-            conn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\LoginAndSignup\\LibSys.mdb");
+            conn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Users\\Lourdes\\source\\repos\\Updated-Log-in-\\LibSys.mdb");
         conn.Open();
         }
 
@@ -70,9 +70,7 @@ namespace LoginAndSignup
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Change_password cp = new Change_password();
-            cp.Show();
-            this.Hide();
+            
         }
     }
 }
