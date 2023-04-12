@@ -214,38 +214,57 @@ namespace LoginAndSignup
                 
                 if (newquantity <= maxquantity)
                 {
-
-                    OleDbCommand com = new OleDbCommand("UPDATE book SET Quantity= '" + newquantity + "', title= '" + title + "', author='" + author + "'  WHERE book_number = '" + no + "'", con);
-                    com.ExecuteNonQuery();
-
                     con.Close();
-                    loadDataGrid();
+                    string query = "SELECT COUNT(*) FROM duplicate WHERE id_num = ? AND book_num =?";
+                    OleDbCommand command = new OleDbCommand(query, con);
+                    command.Parameters.AddWithValue("@id_num", id);
+                    command.Parameters.AddWithValue("@book_num", no);
 
-                    MessageBox.Show("Successfully UPDATED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    loadDataGrid();
-
+                    // open the connection and execute the query
                     con.Open();
-                    OleDbCommand com1 = new OleDbCommand("INSERT INTO records ([date], [id_num], [first_name], [last_name], [book_num], [title], [author], [remarks]) VALUES (@date, @id_num, @first_name, @last_name, @book_num, @title, @author, @remarks)", con);
-                    com1.Parameters.AddWithValue("@date", sqlFormattedDate);
-                    com1.Parameters.AddWithValue("@id_num", id);
-                    com1.Parameters.AddWithValue("@first_name", fname);
-                    com1.Parameters.AddWithValue("@last_name", lname);
-                    com1.Parameters.AddWithValue("@book_num", no);
-                    com1.Parameters.AddWithValue("@title", title);
-                    com1.Parameters.AddWithValue("@author", author);
-                    com1.Parameters.AddWithValue("@remarks", r);
-                    com1.ExecuteNonQuery();
+                    int count = (int)command.ExecuteScalar();
 
-                    con.Close();
-                    loadDataGrid();
+                    // check if the username already exists
+                    if (count > 0)
+                    {
+                        OleDbCommand com = new OleDbCommand("UPDATE book SET Quantity= '" + newquantity + "', title= '" + title + "', author='" + author + "'  WHERE book_number = '" + no + "'", con);
+                        com.ExecuteNonQuery();
 
-                    con.Open();
-                    OleDbCommand com2 = new OleDbCommand("Delete from duplicate where id_num= '" + id + "'", con);
-                    com2.ExecuteNonQuery();
+                        con.Close();
+                        loadDataGrid();
 
-                    con.Close();    
-                    loadDataGrid();
+                        MessageBox.Show("Successfully UPDATED!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        loadDataGrid();
 
+                        con.Open();
+                        OleDbCommand com1 = new OleDbCommand("INSERT INTO records ([date], [id_num], [first_name], [last_name], [book_num], [title], [author], [remarks]) VALUES (@date, @id_num, @first_name, @last_name, @book_num, @title, @author, @remarks)", con);
+                        com1.Parameters.AddWithValue("@date", sqlFormattedDate);
+                        com1.Parameters.AddWithValue("@id_num", id);
+                        com1.Parameters.AddWithValue("@first_name", fname);
+                        com1.Parameters.AddWithValue("@last_name", lname);
+                        com1.Parameters.AddWithValue("@book_num", no);
+                        com1.Parameters.AddWithValue("@title", title);
+                        com1.Parameters.AddWithValue("@author", author);
+                        com1.Parameters.AddWithValue("@remarks", r);
+                        com1.ExecuteNonQuery();
+
+                        con.Close();
+                        loadDataGrid();
+
+                        con.Open();
+                        OleDbCommand com2 = new OleDbCommand("Delete from duplicate where id_num= '" + id + "'", con);
+                        com2.ExecuteNonQuery();
+
+                        con.Close();
+                        loadDataGrid();
+                    }
+                    else
+                    {
+                        con.Close();
+                        MessageBox.Show("Transaction error", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        
+
+                    }
                 }
                 else
                 {

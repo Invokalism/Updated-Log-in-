@@ -58,14 +58,9 @@ namespace LoginAndSignup
                             if (DecryptPassword(hashedPassword, currentPassword))
                             {
                                 string newHashedPassword = EncryptPassword(newPassword);
-                                query = "UPDATE Login SET password = @password WHERE username = @username";
-                                using (OleDbCommand updateCommand = new OleDbCommand(query, connection))
-                                {
-                                    updateCommand.Parameters.AddWithValue("@username", username);
-                                    updateCommand.Parameters.AddWithValue("@password", newHashedPassword); 
-                                    int rowsAffected = updateCommand.ExecuteNonQuery();
-                                    return rowsAffected > 0;
-                                }
+                                OleDbCommand updatecommand = new OleDbCommand("Update Login set password = '" + newHashedPassword +"' where username = '" + username + "'", connection);
+                                OleDbDataReader dr = updatecommand.ExecuteReader();
+                                dr.Close();
                             }
                         }
                     }
