@@ -144,7 +144,7 @@ namespace LoginAndSignup
 
 
             string g9 = "Printed By: Admin";
-            e.Graphics.DrawString(g9, new System.Drawing.Font("Book Antiqua", 9, FontStyle.Bold), Brushes.Black, 640, 1000);
+            e.Graphics.DrawString(g9, new System.Drawing.Font("Book Antiqua", 9, FontStyle.Bold), Brushes.Black, 640, 1050);
 
             string l2 = "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
             e.Graphics.DrawString(l2, new System.Drawing.Font("Book Antiqua", 9, FontStyle.Bold), Brushes.Black, 0, 160);
